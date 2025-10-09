@@ -1,20 +1,11 @@
-import { useEffect, useState } from "react";
 
-function App() {
-  const [data, setData] = useState(null);
+import Router from "./routes/Router";
+import { BrowserRouter } from "react-router-dom";
 
-  useEffect(() => {
-    fetch("http://localhost:8000/api.php")  // or /api/endpoint
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
-
+export default function App() {
   return (
-    <div>
-      <h1>React + PHP Integration</h1>
-      <p>{data}</p>
-    </div>
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
   );
 }
-
-export default App;
