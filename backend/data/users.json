@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "name": "zohaib",
+        "email": "zohaib@gmail.com",
+        "password": "$2y$10$S3aa9dPDTy3ypKZAyfG8tey2QYj5jx5qv4GQUnqdbVa\/vmtC6QqPm",
+        "token": "18bfd45eeb0b994aa82f195b15846dea",
+        "created_at": "2026-02-10T13:56:46+01:00"
+    }
+]

@@ -8,6 +8,7 @@ import Restaurants from "../components/hero_others/Restaurants";
 import Offers from "../views/OffersView";
 import ContactUsView from "../views/ContactUsView";
 import LoginView from "../views/LoginView";
+import DashboardView from "../views/DashboardView";
 import OfferDetails from "../components/pages/offer_details/OfferDetails";
 import CartView from "../views/CartView";
 
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/contact" element={<ContactUsView />} />
         <Route path="/cart" element={<CartView />} />
         <Route path="/login" element={<LoginView />} />
+        <Route path="/dashboard" element={<DashboardView />} />
       </Routes>
       <Footer />
     </>

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Margherita Pizza",
+    "description": "Classic pizza with fresh tomatoes, mozzarella, and basil.",
+    "price": 499,
+    "category": "Pizza",
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    "created_at": "2026-02-10T00:00:00+00:00"
+  },
+  {
+    "id": 2,
+    "name": "Margherita Burger",
+    "description": "Classic burger with fresh tomatoes, mozzarella, and basil.",
+    "price": 799,
+    "category": "Burger",
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    "created_at": "2026-02-10T00:00:00+00:00"
+  },
+  {
+    "id": 3,
+    "name": "Margherita Pratha Roll",
+    "description": "Classic paratha roll with fresh tomatoes, mozzarella, and basil.",
+    "price": 699,
+    "category": "Pratha Roll",
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    "created_at": "2026-02-10T00:00:00+00:00"
+  },
+  {
+    "id": 4,
+    "name": "Margherita sharwarma",
+    "description": "Classic sharwarma with fresh tomatoes, mozzarella, and basil.",
+    "price": 999,
+    "category": "Shawarma",
+    "rating": 4.1,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    "created_at": "2026-02-10T00:00:00+00:00"
+  }
+]
