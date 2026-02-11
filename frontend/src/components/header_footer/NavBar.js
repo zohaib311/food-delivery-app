@@ -59,6 +59,8 @@ export default function Navbar() {
                                 Dashboard
                             </Link>
                         )}
+                        <Link to="/cart">
+                            <ShoppingBag className="text-gray-700 cursor-pointer hover:text-green-600 transition" /></Link>
 
                         <button
                             onClick={() => setShowMenu(!showMenu)}

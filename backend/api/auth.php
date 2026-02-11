@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../headers/Headers.php';
+require_once __DIR__ . '/../headers/Headers.php';
 require_once __DIR__ . '/controller/UsersController.php';
 
 $controller = new UsersController();

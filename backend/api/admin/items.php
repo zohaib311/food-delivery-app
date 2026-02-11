@@ -32,6 +32,7 @@ if (!$user || $user['role'] !== 'admin') {
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : null;
+// database Connection
 $db = Database::getInstance()->getConnection();
 
 switch ($action) {
@@ -110,37 +111,49 @@ switch ($action) {
         break;
 
     case 'update':
-        $raw = file_get_contents('php://input');
-        $payload = json_decode($raw, true);
-        if (!is_array($payload) || empty(intval($payload['id'] ?? 0)) || empty(trim($payload['name'] ?? ''))) {
-            http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Missing required fields',
-                'received_raw' => $raw,
-                'content_type' => isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null
-            ]);
-            break;
-        }
-        $id = intval($payload['id']);
-        $name = $payload['name'];
-        $description = isset($payload['description']) ? $payload['description'] : '';
-        $price = isset($payload['price']) ? floatval($payload['price']) : 0;
-        $category = isset($payload['category']) ? $payload['category'] : 'uncategorized';
-        $image = isset($payload['image']) ? $payload['image'] : null;
+    $raw = file_get_contents('php://input');
+    $payload = json_decode($raw, true);
 
-        $stmt = $db->prepare("UPDATE items SET name = ?, description = ?, price = ?, category = ?, image = ? WHERE id = ?");
-        $stmt->bind_param("ssdssi", $name, $description, $price, $category, $image, $id);
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Item updated']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Failed to update item', 'db_error' => $stmt->error]);
-        }
-        $stmt->close();
+    if (!is_array($payload)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid JSON']);
         break;
+    }
+
+    $id = intval($payload['id'] ?? 0);
+    $name = trim($payload['name'] ?? '');
+    $description = $payload['description'] ?? '';
+    $price = floatval($payload['price'] ?? 0);
+    $category = $payload['category'] ?? '';
+    $image = $payload['image'] ?? null;
+
+    if (!$id || empty($name)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'ID and Name are required']);
+        break;
+    }
+
+    $stmt = $db->prepare("UPDATE items SET name=?, description=?, price=?, category=?, image=? WHERE id=?");
+
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'db_error' => $db->error]);
+        break;
+    }
+
+    $stmt->bind_param("ssdssi", $name, $description, $price, $category, $image, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Item updated']);
+    } else {
+        echo json_encode(['success' => false, 'db_error' => $stmt->error]);
+    }
+
+    $stmt->close();
+    break;
+
 
     default:
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Unknown action']);
 }
+

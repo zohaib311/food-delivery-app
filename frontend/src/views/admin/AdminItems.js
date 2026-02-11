@@ -65,40 +65,61 @@ export default function AdminItems() {
         }
 
         const payload = {
-            name: formData.name.trim(),
-            description: formData.description.trim(),
-            price: parseFloat(formData.price),
-            category: formData.category,
-            image: formData.image || null
+            ...formData,
+            price: parseFloat(formData.price)
         };
 
-        console.log("Sending:", payload);
+        const action = editingItem ? 'update' : 'add';
 
         try {
-            const res = await fetch('http://localhost:8000/api/admin/items.php?action=add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
+            const res = await fetch(
+                `http://localhost:8000/api/admin/items.php?action=${action}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
 
             const data = await res.json();
-            console.log("Response:", data);
 
             if (data.success) {
                 fetchItems();
-                setFormData({ name: '', description: '', price: '', category: 'Pizza', image: '' });
                 setShowModal(false);
+                setEditingItem(null);
+                setFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: 'Pizza',
+                    image: ''
+                });
             } else {
-                setError(data.message || "Failed to add item");
+                setError(data.message || 'Operation failed');
             }
         } catch (err) {
-            console.error(err);
-            setError("Server error");
+            setError('Server error');
         }
     };
+
+
+    const handleEdit = (item) => {
+        setEditingItem(item);
+        setFormData({
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            price: item.price,
+            category: item.category,
+            image: item.image || ''
+        });
+        setShowModal(true);
+    };
+
+
 
 
     const handleDelete = async (id) => {
@@ -110,7 +131,8 @@ export default function AdminItems() {
             });
             const data = await res.json();
             if (data.success) {
-                setItems(items.filter(i => i.id !== id));
+                setItems(items.filter(i => Number(i.id) !== Number(id)));
+
             }
         } catch (err) {
             alert('Error deleting item');
@@ -154,7 +176,18 @@ export default function AdminItems() {
                             <h1 className="text-2xl font-bold text-gray-800">Manage Items</h1>
                         </div>
                         <button
-                            onClick={() => { setShowModal(true); setEditingItem(null); }}
+                            onClick={() => {
+                                setEditingItem(null);
+                                setFormData({
+                                    name: '',
+                                    description: '',
+                                    price: '',
+                                    category: 'Pizza',
+                                    image: ''
+                                });
+                                setShowModal(true);
+                            }}
+
                             className="flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
                         >
                             <Plus className="w-4 h-4 mr-2" />
@@ -190,7 +223,10 @@ export default function AdminItems() {
                                 className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <h2 className="text-2xl font-bold mb-4">Add New Item</h2>
+                                <h2 className="text-2xl font-bold mb-4">
+                                    {editingItem ? 'Edit Item' : 'Add New Item'}
+                                </h2>
+
                                 {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>}
 
                                 <form onSubmit={handleAddItem} className="space-y-4">
@@ -211,9 +247,9 @@ export default function AdminItems() {
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 overflow-hidden whitespace-nowrap text-ellipsis"
                                             placeholder="Item description..."
-                                            rows="3"
+                                            rows="1"
                                         />
                                     </div>
 
@@ -261,7 +297,8 @@ export default function AdminItems() {
                                             type="submit"
                                             className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-colors"
                                         >
-                                            Add Item
+                                            {editingItem ? 'Update Item' : 'Add Item'}
+
                                         </button>
                                         <button
                                             type="button"
@@ -306,6 +343,13 @@ export default function AdminItems() {
                                                 {item.category}
                                             </span>
                                         </div>
+
+                                        <button
+                                            onClick={() => handleEdit(item)}
+                                            className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors mb-2"
+                                        >
+                                            Edit
+                                        </button>
 
                                         <button
                                             onClick={() => handleDelete(item.id)}

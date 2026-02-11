@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, ShoppingCart, BarChart3, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -20,6 +20,42 @@ export default function AdminDashboard() {
         { icon: Users, label: 'Manage Users', path: '/admin/users', color: 'text-purple-500' },
         { icon: ShoppingCart, label: 'Manage Items', path: '/admin/items', color: 'text-orange-500' },
     ];
+
+    const [stats, setStats] = useState({
+        total_users: 0,
+        total_items: 0
+    });
+
+
+    const fetchDashboardStats = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+
+            const res = await fetch(
+                "http://localhost:8000/api/admin/DashStats.php",
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await res.json();
+
+            if (data.success) {
+                setStats(data.data);
+            }
+
+        } catch (error) {
+            console.error("Dashboard fetch error", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDashboardStats();
+
+    }, []);
+
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -55,7 +91,7 @@ export default function AdminDashboard() {
                         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-500 text-sm font-medium">Total Users</p>
+                                    <p className="text-gray-500 text-sm font-medium">Total Users {stats.total_users}</p>
                                     <p className="text-3xl font-bold text-gray-800 mt-2">—</p>
                                 </div>
                                 <Users className="w-12 h-12 text-blue-500 opacity-20" />
@@ -65,7 +101,7 @@ export default function AdminDashboard() {
                         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-gray-500 text-sm font-medium">Total Items</p>
+                                    <p className="text-gray-500 text-sm font-medium">Total Items {stats.total_items}</p>
                                     <p className="text-3xl font-bold text-gray-800 mt-2">—</p>
                                 </div>
                                 <ShoppingCart className="w-12 h-12 text-orange-500 opacity-20" />
