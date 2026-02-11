@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/../../config/Database.php';
-require_once __DIR__ . '/UsersController.php';
+require_once __DIR__ . '/../controller/UsersController.php';
 
 // Helper to read bearer token
 function getBearerToken() {
@@ -54,6 +54,89 @@ switch ($action) {
         }
         $stmt->close();
         echo json_encode(['success' => true, 'users' => $users]);
+        break;
+
+    case 'update':
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = isset($data['id']) ? intval($data['id']) : 0;
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID']);
+            break;
+        }
+
+        // Prepare update fields
+        $name = $data['name'] ?? null;
+        $email = $data['email'] ?? null;
+        $phone = $data['phone'] ?? null;
+        $password = $data['password'] ?? null;
+        $role = $data['role'] ?? null;
+        $status = $data['status'] ?? null;
+
+        // Build dynamic update query
+        $updates = [];
+        $types = '';
+        $params = [];
+
+        if ($name !== null) {
+            $updates[] = "name = ?";
+            $types .= 's';
+            $params[] = $name;
+        }
+        if ($email !== null) {
+            $updates[] = "email = ?";
+            $types .= 's';
+            $params[] = $email;
+        }
+        if ($phone !== null) {
+            $updates[] = "phone = ?";
+            $types .= 's';
+            $params[] = $phone;
+        }
+        if ($password !== null && !empty($password)) {
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $updates[] = "password = ?";
+            $types .= 's';
+            $params[] = $passwordHash;
+        }
+        if ($role !== null) {
+            $updates[] = "role = ?";
+            $types .= 's';
+            $params[] = $role;
+        }
+        if ($status !== null) {
+            $updates[] = "status = ?";
+            $types .= 'i';
+            $params[] = intval($status);
+        }
+
+        if (empty($updates)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'No fields to update']);
+            break;
+        }
+
+        $params[] = $id;
+        $types .= 'i';
+
+        $db = Database::getInstance()->getConnection();
+        $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?";
+        $stmt = $db->prepare($query);
+        
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+            break;
+        }
+
+        $stmt->bind_param($types, ...$params);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'User updated successfully']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to update user']);
+        }
+        $stmt->close();
         break;
 
     case 'delete':

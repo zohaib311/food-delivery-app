@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Edit2, Plus, Search, ChevronLeft, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
+import { Trash2, Plus, Search, ChevronLeft, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 
@@ -124,7 +124,7 @@ export default function AdminItems() {
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </button>
-                            <h1 className="text-3xl font-bold text-gray-800">Manage Items</h1>
+                            <h1 className="text-2xl font-bold text-gray-800">Manage Items</h1>
                         </div>
                         <button
                             onClick={() => { setShowModal(true); setEditingItem(null); }}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Trash2, Edit2, Save, X, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
-import AdminSidebar from './admin/AdminSidebar';
+import AdminSidebar from '../admin/AdminSidebar';
 
 export default function AdminUsers() {
     const navigate = useNavigate();
@@ -118,7 +118,7 @@ export default function AdminUsers() {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h1 className="text-2xl font-semibold">Users</h1>
-                            <p className="text-sm text-gray-500">Manage registered users and roles.</p>
+                            <p className="text-sm text-gray-500">Manage registereddrrrrrddddd users and roles.</p>
                         </div>
 
                         <div className="flex items-center gap-3">

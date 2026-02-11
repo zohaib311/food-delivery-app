@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Users, ShoppingCart, BarChart3, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Users, ShoppingCart, BarChart3, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AdminSidebar from './AdminSidebar';
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Undo2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Auth() {
     const [isLogin, setIsLogin] = useState(true);
@@ -79,6 +80,10 @@ export default function Auth() {
                     transition={{ duration: 0.6 }}
                     className="flex-1 p-10 md:p-14"
                 >
+                    <Link to="/">
+                        <Undo2 className="text-gray-700 cursor-pointer hover:text-green-600 transition" />
+                    </Link>
+
                     <div className="text-center mb-10">
                         <h2 className="text-4xl font-bold text-gray-800">
                             {isLogin ? "Welcome Back 👋" : "Join Foodies 🍴"}
