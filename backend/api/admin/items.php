@@ -1,14 +1,5 @@
 <?php
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/../../headers/Headers.php';
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../controller/UsersController.php';
 
@@ -44,8 +35,52 @@ $action = isset($_GET['action']) ? $_GET['action'] : null;
 $db = Database::getInstance()->getConnection();
 
 switch ($action) {
+    case 'add':
+    $raw = file_get_contents('php://input');
+    $payload = json_decode($raw, true);
+
+    if (!is_array($payload)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid JSON',
+            'received_raw' => $raw
+        ]);
+        break;
+    }
+
+    $name = trim($payload['name'] ?? '');
+    $description = $payload['description'] ?? '';
+    $price = floatval($payload['price'] ?? 0);
+    $category = $payload['category'] ?? '';
+    $image = $payload['image'] ?? '';
+
+    if (empty($name)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Name is required']);
+        break;
+    }
+
+    $stmt = $db->prepare("INSERT INTO items (name, description, price, category, image) VALUES (?, ?, ?, ?, ?)");
+
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'db_prepare_error' => $db->error]);
+        break;
+    }
+
+    $stmt->bind_param("ssdss", $name, $description, $price, $category, $image);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Item added']);
+    } else {
+        echo json_encode(['success' => false, 'db_error' => $stmt->error]);
+    }
+
+    $stmt->close();
+    break;
+
     case 'list':
-        $stmt = $db->prepare("SELECT * FROM items WHERE status = 1 ORDER BY created_at DESC");
+        $stmt = $db->prepare("SELECT * FROM items  ORDER BY created_at DESC");
         $stmt->execute();
         $result = $stmt->get_result();
         $items = [];
@@ -77,9 +112,14 @@ switch ($action) {
     case 'update':
         $raw = file_get_contents('php://input');
         $payload = json_decode($raw, true);
-        if (!is_array($payload) || empty($payload['id']) || empty($payload['name'])) {
+        if (!is_array($payload) || empty(intval($payload['id'] ?? 0)) || empty(trim($payload['name'] ?? ''))) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Missing required fields',
+                'received_raw' => $raw,
+                'content_type' => isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null
+            ]);
             break;
         }
         $id = intval($payload['id']);
@@ -95,7 +135,7 @@ switch ($action) {
             echo json_encode(['success' => true, 'message' => 'Item updated']);
         } else {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Failed to update item']);
+            echo json_encode(['success' => false, 'message' => 'Failed to update item', 'db_error' => $stmt->error]);
         }
         $stmt->close();
         break;

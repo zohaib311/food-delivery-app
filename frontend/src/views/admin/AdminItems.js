@@ -42,7 +42,9 @@ export default function AdminItems() {
     const fetchItems = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8000/api.php?action=list');
+            const res = await fetch('http://localhost:8000/api/admin/items.php?action=list', {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
+            });
             const data = await res.json();
             if (data.success) setItems(data.items || []);
         } catch (err) {
@@ -55,24 +57,49 @@ export default function AdminItems() {
     const handleAddItem = async (e) => {
         e.preventDefault();
         setError(null);
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError("Login required");
+            return;
+        }
+
+        const payload = {
+            name: formData.name.trim(),
+            description: formData.description.trim(),
+            price: parseFloat(formData.price),
+            category: formData.category,
+            image: formData.image || null
+        };
+
+        console.log("Sending:", payload);
+
         try {
-            const res = await fetch('http://localhost:8000/api.php?action=add', {
+            const res = await fetch('http://localhost:8000/api/admin/items.php?action=add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
             });
+
             const data = await res.json();
+            console.log("Response:", data);
+
             if (data.success) {
-                setItems([...items, data.item]);
+                fetchItems();
                 setFormData({ name: '', description: '', price: '', category: 'Pizza', image: '' });
                 setShowModal(false);
             } else {
-                setError(data.message || 'Error adding item');
+                setError(data.message || "Failed to add item");
             }
         } catch (err) {
-            setError('Error adding item');
+            console.error(err);
+            setError("Server error");
         }
     };
+
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this item?')) return;
