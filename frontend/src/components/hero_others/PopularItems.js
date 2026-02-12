@@ -10,7 +10,7 @@ export default function PopularItems() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api.php?action=list')
+        fetch('http://localhost:8000/api/customer/getItems.php')
             .then((res) => res.json())
             .then((data) => {
                 if (data && Array.isArray(data.items)) {

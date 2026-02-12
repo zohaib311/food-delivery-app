@@ -8,8 +8,8 @@ export default function HomeView() {
     return (
         <>
             <Hero />
-            <Categories />
             <PopularItems />
+            <Categories />
             <Restaurants />
         </>
     )
