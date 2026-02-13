@@ -17,6 +17,7 @@ import AdminUsers from "../views/admin/AdminUsers";
 import AdminItems from "../views/admin/AdminItems";
 import Checkout from "../components/pages/checkout/Checkout";
 import OrdersView from "../views/customer/OrdersView";
+import AdminOrders from "../views/admin/AdminOrders";
 
 export default function App() {
   const location = useLocation();
@@ -63,6 +64,14 @@ export default function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <AdminItems />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminOrders />
             </ProtectedRoute>
           }
         />

@@ -19,6 +19,8 @@ export default function AdminDashboard() {
         { icon: BarChart3, label: 'Dashboard', path: '/admin/dashboard', color: 'text-blue-500' },
         { icon: Users, label: 'Manage Users', path: '/admin/users', color: 'text-purple-500' },
         { icon: ShoppingCart, label: 'Manage Items', path: '/admin/items', color: 'text-orange-500' },
+        { icon: ShoppingCart, label: 'Manage Orders', path: '/admin/orders', color: 'text-green-500' },
+
     ];
 
     const [stats, setStats] = useState({
