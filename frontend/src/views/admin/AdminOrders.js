@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Search, Trash2, Plus, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
+import { ChevronLeft, Search, Trash2, Plus, Users, ShoppingCart, BarChart3, Menu, X, MapPin, Phone, Mail, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 
@@ -34,6 +34,7 @@ export default function AdminOrders() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [expanded, setExpanded] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
         fetchOrders();
@@ -157,7 +158,7 @@ export default function AdminOrders() {
                                             <ul className="space-y-1 text-sm text-gray-700">
                                                 {o.items.map((it, i) => (
                                                     <li key={i} className="flex justify-between">
-                                                        <div>{it.name} x{it.quantity}</div>
+                                                        <div>{it.name} <b>x ({it.quantity}) </b></div>
                                                         <div>Rs. {(parseFloat(it.price) * it.quantity).toFixed(2)}</div>
                                                     </li>
                                                 ))}
@@ -171,7 +172,7 @@ export default function AdminOrders() {
                                         <select value={o.order_status} onChange={(e) => updateStatus(o.id, e.target.value)} className="border rounded px-2 py-1">
                                             {statuses.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
                                         </select>
-                                        <button className="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Details</button>
+                                        <button onClick={() => setSelectedOrder(o)} className="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">Details</button>
                                     </div>
                                 </motion.div>
                             ))
@@ -181,6 +182,88 @@ export default function AdminOrders() {
                     <p className="text-gray-600 text-sm mt-6">Total Orders: <span className="font-bold">{filtered.length}</span></p>
                 </div>
             </div>
+
+            {/* Details Modal */}
+            {selectedOrder && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setSelectedOrder(null)}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        className="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-6 max-h-96 overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Order Details</h2>
+                            <button onClick={() => setSelectedOrder(null)} className="p-1 hover:bg-gray-100 rounded">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Order Info */}
+                            <div className="space-y-3">
+                                <div className="bg-blue-50 rounded-lg p-4">
+                                    <h3 className="text-sm font-bold text-gray-700 mb-2">Order Information</h3>
+                                    <div className="space-y-2 text-sm text-gray-700">
+                                        <div><span className="font-semibold">Order ID:</span> #{selectedOrder.id}</div>
+                                        <div><span className="font-semibold">Status:</span> <span className={`px-2 py-1 rounded text-xs font-semibold ${STATUS_COLORS[selectedOrder.order_status] || 'bg-gray-100 text-gray-800'}`}>{selectedOrder.order_status.replace(/_/g, ' ')}</span></div>
+                                        <div><span className="font-semibold">Total Amount:</span> Rs. {parseFloat(selectedOrder.total_amount).toFixed(2)}</div>
+                                        <div><span className="font-semibold">Payment Status:</span> {selectedOrder.payment_status}</div>
+                                        <div><span className="font-semibold">Payment Method:</span> {selectedOrder.payment_method}</div>
+                                        <div><span className="font-semibold">Order Date:</span> {selectedOrder.created_at ? new Date(selectedOrder.created_at).toLocaleString() : '—'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Customer & Delivery Info */}
+                            <div className="space-y-3">
+                                <div className="bg-green-50 rounded-lg p-4">
+                                    <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2"><Users className="w-4 h-4" /> Customer Information</h3>
+                                    <div className="space-y-2 text-sm text-gray-700">
+                                        <div><span className="font-semibold">Name:</span> {selectedOrder.delivery_name || selectedOrder.user_name || '—'}</div>
+                                        <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-500" /><span className="font-semibold">Phone:</span> {selectedOrder.delivery_phone || '—'}</div>
+                                        <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-gray-500 mt-0.5" /><div><span className="font-semibold">Address:</span> {selectedOrder.delivery_address || '—'}, {selectedOrder.delivery_city || '—'} {selectedOrder.delivery_zip || '—'}</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Order Items */}
+                        <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                            <h3 className="text-sm font-bold text-gray-700 mb-3">Order Items</h3>
+                            {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                                <div className="space-y-2">
+                                    {selectedOrder.items.map((it, i) => (
+                                        <div key={i} className="flex justify-between items-center text-sm py-2 border-b border-gray-200">
+                                            <div className="flex items-center gap-3 flex-1">
+                                                <div>
+                                                    <div className="font-semibold text-gray-800">{it.name}</div>
+                                                    <div className="text-xs text-gray-500">Qty: {it.quantity}</div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-semibold">Rs. {(parseFloat(it.price) * it.quantity).toFixed(2)}</div>
+                                                <div className="text-xs text-gray-500">@ Rs. {parseFloat(it.price).toFixed(2)}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="border-t-2 border-gray-300 pt-2 mt-2 flex justify-between font-bold text-gray-800">
+                                        <span>Total:</span>
+                                        <span>Rs. {parseFloat(selectedOrder.total_amount).toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-gray-500 text-sm">No items</div>
+                            )}
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
         </div>
     );
 }

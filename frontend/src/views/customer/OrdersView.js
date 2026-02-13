@@ -16,8 +16,8 @@ export default function CustomerOrders() {
     }, []);
 
     const fetchOrders = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             setError(null);
             const token = localStorage.getItem('authToken');
 
@@ -135,12 +135,16 @@ export default function CustomerOrders() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-800">My Orders</h1>
-                    <button
-                        onClick={() => navigate('/home')}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition"
-                    >
-                        Order More Food
-                    </button>
+                    <div className='flex justify-between items-right '>
+                        <button onClick={fetchOrders}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 mx-2 py-2 rounded-lg font-semibold transition">Refresh</button>
+                        <button
+                            onClick={() => navigate('/home')}
+                            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition"
+                        >
+                            Order More Food
+                        </button>
+                    </div>
                 </div>
 
                 {/* Error Message */}
