@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OrdersView from './OrdersView';
+import OrdersView from './customer/OrdersView';
 import AdminDashboard from './admin/AdminDashboard';
 
 export default function DashboardView() {

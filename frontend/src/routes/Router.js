@@ -10,13 +10,13 @@ import ContactUsView from "../views/ContactUsView";
 import LoginView from "../views/LoginView";
 import DashboardView from "../views/DashboardView";
 import OfferDetails from "../components/pages/offer_details/OfferDetails";
-import CartView from "../views/CartView";
+import CartView from "../views/customer/CartView";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AdminDashboard from "../views/admin/AdminDashboard";
 import AdminUsers from "../views/admin/AdminUsers";
 import AdminItems from "../views/admin/AdminItems";
 import Checkout from "../components/pages/checkout/Checkout";
-import OrdersView from "../views/OrdersView";
+import OrdersView from "../views/customer/OrdersView";
 
 export default function App() {
   const location = useLocation();
