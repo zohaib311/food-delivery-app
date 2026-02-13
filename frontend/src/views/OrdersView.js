@@ -47,6 +47,35 @@ export default function CustomerOrders() {
         }
     };
 
+    const cancelOrder = async (orderId) => {
+        try {
+            const token = localStorage.getItem('authToken');
+
+            const response = await fetch(`http://localhost:8000/api/customer/placeOrders.php?action=update-status&id=${orderId}&status=cancelled`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Failed to cancel order');
+            }
+
+            // Update the order status in the local state
+            setOrders(prev => prev.map(order =>
+                order.id === orderId ? { ...order, order_status: 'cancelled' } : order
+            ));
+
+            setError(null);
+            alert('Order cancelled successfully!');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     const getStatusIcon = (status) => {
         switch (status) {
             case 'pending':
@@ -128,7 +157,7 @@ export default function CustomerOrders() {
 
                 {/* Filter Tabs */}
                 <div className="bg-white rounded-xl shadow-md p-4 mb-8 flex gap-2 flex-wrap">
-                    {['all', 'pending', 'accepted', 'preparing', 'on_the_way', 'delivered'].map(status => (
+                    {['all', 'pending', 'accepted', 'preparing', 'on_the_way', 'delivered', 'cancelled'].map(status => (
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
@@ -274,13 +303,13 @@ export default function CustomerOrders() {
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="mt-6 flex gap-3 pt-6 border-t">
+                                        <div className="mt-6 flex gap-3 pt-6 border-t flex-wrap">
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     navigate('/home');
                                                 }}
-                                                className="flex-1 border-2 border-orange-500 text-orange-500 hover:bg-orange-50 font-semibold py-2 rounded-lg transition"
+                                                className="flex-1 min-w-[120px] border-2 border-orange-500 text-orange-500 hover:bg-orange-50 font-semibold py-2 rounded-lg transition"
                                             >
                                                 Reorder
                                             </button>
@@ -290,9 +319,22 @@ export default function CustomerOrders() {
                                                         e.stopPropagation();
                                                         // Handle review action
                                                     }}
-                                                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg transition"
+                                                    className="flex-1 min-w-[120px] bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg transition"
                                                 >
                                                     Rate Order
+                                                </button>
+                                            )}
+                                            {order.order_status !== 'delivered' && order.order_status !== 'cancelled' && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (window.confirm('Are you sure you want to cancel this order?')) {
+                                                            cancelOrder(order.id);
+                                                        }
+                                                    }}
+                                                    className="flex-1 min-w-[120px] border-2 border-red-500 text-red-500 hover:bg-red-50 font-semibold py-2 rounded-lg transition"
+                                                >
+                                                    Cancel Order
                                                 </button>
                                             )}
                                         </div>
