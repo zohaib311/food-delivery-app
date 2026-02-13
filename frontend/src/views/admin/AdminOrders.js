@@ -35,6 +35,7 @@ export default function AdminOrders() {
     const [searchTerm, setSearchTerm] = useState('');
     const [expanded, setExpanded] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedTab, setSelectedTab] = useState('all');
 
     useEffect(() => {
         fetchOrders();
@@ -82,7 +83,9 @@ export default function AdminOrders() {
 
     const filtered = orders.filter(o => {
         const q = searchTerm.toLowerCase();
-        return String(o.id).includes(q) || (o.delivery_name || o.user_name || '').toLowerCase().includes(q) || (o.order_status || '').toLowerCase().includes(q);
+        const matchesSearch = String(o.id).includes(q) || (o.delivery_name || o.user_name || '').toLowerCase().includes(q) || (o.order_status || '').toLowerCase().includes(q);
+        const matchesTab = selectedTab === 'all' || o.order_status === selectedTab;
+        return matchesSearch && matchesTab;
     });
 
     const statuses = ['pending', 'accepted', 'preparing', 'on_the_way', 'delivered', 'cancelled'];
@@ -126,6 +129,31 @@ export default function AdminOrders() {
                             </div>
                             <button onClick={fetchOrders} className="bg-blue-600 text-white px-4 py-2 rounded">Refresh</button>
                         </div>
+                    </div>
+
+                    {/* Status Tabs */}
+                    <div className="mb-6 bg-white rounded-lg shadow-md p-3 flex items-center gap-2 overflow-x-auto">
+                        <button
+                            onClick={() => setSelectedTab('all')}
+                            className={`px-4 py-2 rounded-lg whitespace-nowrap font-semibold transition-colors ${selectedTab === 'all'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                        >
+                            All Orders
+                        </button>
+                        {statuses.map(status => (
+                            <button
+                                key={status}
+                                onClick={() => setSelectedTab(status)}
+                                className={`px-4 py-2 rounded-lg whitespace-nowrap font-semibold transition-colors ${selectedTab === status
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                            >
+                                {status.replace(/_/g, ' ').charAt(0).toUpperCase() + status.replace(/_/g, ' ').slice(1)}
+                            </button>
+                        ))}
                     </div>
 
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
