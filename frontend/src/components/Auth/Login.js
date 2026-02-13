@@ -29,7 +29,16 @@ export default function Auth() {
             if (!res.ok) throw new Error(json.message || 'Login failed');
             localStorage.setItem('authToken', json.token);
             localStorage.setItem('user', JSON.stringify(json.user));
-            navigate('/dashboard');
+
+            // Role-based redirect
+            if (json.user.role === 'admin') {
+                navigate('/admin/dashboard');
+            } else if (json.user.role === 'restaurant') {
+                navigate('/restaurant/dashboard');
+            } else {
+                // Customer
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError(err.message);
         } finally { setLoading(false); }

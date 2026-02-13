@@ -15,6 +15,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import AdminDashboard from "../views/admin/AdminDashboard";
 import AdminUsers from "../views/admin/AdminUsers";
 import AdminItems from "../views/admin/AdminItems";
+import Checkout from "../components/pages/checkout/Checkout";
+import OrdersView from "../views/OrdersView";
 
 export default function App() {
   const location = useLocation();
@@ -26,6 +28,7 @@ export default function App() {
       {!isAdminRoute && !isLoginRoute && <Navbar />}
       <Routes>
         <Route path="/" element={<HomeView />} />
+        <Route path="/home" element={<HomeView />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/category/:name" element={<CategoryPage />} />
         <Route path="/restaurants" element={<Restaurants />} />
@@ -33,6 +36,8 @@ export default function App() {
         <Route path="/offers/:id" element={<OfferDetails />} />
         <Route path="/contact" element={<ContactUsView />} />
         <Route path="/cart" element={<CartView />} />
+        <Route path="/checkout" element={<ProtectedRoute requiredRole="customer"><Checkout /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute requiredRole="customer"><OrdersView /></ProtectedRoute>} />
         <Route path="/login" element={<LoginView />} />
         <Route path="/dashboard" element={<DashboardView />} />
 

@@ -1,4 +1,4 @@
-import { ShoppingBag, LogOut, Settings } from "lucide-react";
+import { ShoppingBag, LogOut, Settings, Package } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -57,6 +57,12 @@ export default function Navbar() {
                             <Link to="/admin/dashboard" className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium transition">
                                 <Settings className="w-4 h-4" />
                                 Dashboard
+                            </Link>
+                        )}
+                        {user.role === 'customer' && (
+                            <Link to="/orders" className="flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium transition">
+                                <Package className="w-4 h-4" />
+                                My Orders
                             </Link>
                         )}
                         <Link to="/cart">

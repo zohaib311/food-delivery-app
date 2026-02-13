@@ -118,7 +118,15 @@ export default function CartPage() {
                     <motion.button
                         whileTap={{ scale: 0.97 }}
                         className="mt-4 sm:mt-0 bg-green-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-600 transition"
-                        onClick={() => navigate("/checkout")}
+                        onClick={() => {
+                            const token = localStorage.getItem('authToken');
+                            if (!token) {
+                                alert('Please login to proceed with checkout');
+                                navigate("/login");
+                            } else {
+                                navigate("/checkout");
+                            }
+                        }}
                     >
                         Proceed to Checkout
                     </motion.button>

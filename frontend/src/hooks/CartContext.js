@@ -6,6 +6,7 @@ export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState(() => {
         const stored = localStorage.getItem("cart");
         return stored ? JSON.parse(stored) : [];
+
     });
 
     useEffect(() => {
@@ -19,10 +20,12 @@ export const CartProvider = ({ children }) => {
                 return prev.map((i) =>
                     i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i
                 );
+
             } else {
                 return [...prev, { ...item, quantity: 1 }];
             }
         });
+
     };
 
     const removeFromCart = (name) =>

@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { Star, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import popularItemsData from "./assets/links/popularitems";
 import { useCart } from "../../hooks/CartContext";
 
 export default function PopularItems() {
     const { addToCart } = useCart();
+    const navigate = useNavigate();
     const [items, setItems] = useState(popularItemsData);
     const [loading, setLoading] = useState(true);
 
@@ -50,7 +52,12 @@ export default function PopularItems() {
                                 <p className="text-green-600 font-semibold text-lg mb-3">Rs. {item.price}</p>
                                 <motion.button
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={() => addToCart(item)}
+                                    onClick={() => {
+                                        addToCart(item);
+                                        setTimeout(() => {
+                                            navigate('/cart');
+                                        }, 700);
+                                    }}
                                     className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded-full font-medium transition"
                                 >
                                     <ShoppingCart className="w-4 h-4" />
