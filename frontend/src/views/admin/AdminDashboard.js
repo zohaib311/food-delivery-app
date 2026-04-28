@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Users, ShoppingCart, BarChart3, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AdminSidebar from './AdminSidebar';
+import { apiUrl } from '../../config/api';
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function AdminDashboard() {
             const token = localStorage.getItem("authToken");
 
             const res = await fetch(
-                "http://localhost:8000/api/admin/DashStats.php",
+                apiUrl("/api/admin/DashStats.php"),
                 {
                     headers: {
                         "Authorization": `Bearer ${token}`

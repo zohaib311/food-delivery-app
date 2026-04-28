@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Undo2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
+import { apiUrl } from "../../config/api";
 
 export default function Auth() {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +15,7 @@ export default function Auth() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const api = (path) => `http://localhost:8000/api/auth.php?action=${path}`;
+    const api = (path) => apiUrl(`/api/auth.php?action=${path}`);
 
     const doLogin = async () => {
         setLoading(true);

@@ -2,12 +2,19 @@ Backend (core PHP) for Food Delivery App
 
 Quick start:
 
-1. Change to the backend folder and run PHP built-in server:
+1. Copy `.env.example` to `.env` and update database/CORS values if needed.
+
+2. Change to the backend folder and run PHP built-in server:
 
    cd backend
    php -S localhost:8000
 
-2. API endpoints (no framework):
+Environment variables:
+
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+- `CORS_ALLOWED_ORIGIN` for the frontend origin, for example `http://localhost:3000`
+
+3. API endpoints (no framework):
 
 - List items: GET http://localhost:8000/api.php?action=list
 - Get item: GET http://localhost:8000/api.php?action=get&id=1

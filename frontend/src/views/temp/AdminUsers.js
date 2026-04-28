@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Trash2, Edit2, Save, X, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
 import AdminSidebar from '../admin/AdminSidebar';
+import { apiUrl } from '../../config/api';
 
 export default function AdminUsers() {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function AdminUsers() {
     async function fetchUsers() {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8000/api/admin/users.php?action=list', {
+            const res = await fetch(apiUrl('/api/admin/users.php?action=list'), {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
             });
             const json = await res.json();
@@ -48,7 +49,7 @@ export default function AdminUsers() {
         if (!editing) return;
         setSaving(true);
         try {
-            const res = await fetch('http://localhost:8000/api/admin/users.php?action=update', {
+            const res = await fetch(apiUrl('/api/admin/users.php?action=update'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export default function AdminUsers() {
 
     const confirmDelete = async (id) => {
         try {
-            const res = await fetch(`http://localhost:8000/api/admin/users.php?action=delete&id=${id}`, {
+            const res = await fetch(apiUrl(`/api/admin/users.php?action=delete&id=${id}`), {
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
             });

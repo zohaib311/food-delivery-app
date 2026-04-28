@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import popularItemsData from "./assets/links/popularitems";
 import { useCart } from "../../hooks/CartContext";
+import { apiUrl } from "../../config/api";
 
 export default function PopularItems() {
     const { addToCart } = useCart();
@@ -12,7 +13,7 @@ export default function PopularItems() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/customer/getItems.php')
+        fetch(apiUrl('/api/customer/getItems.php'))
             .then((res) => res.json())
             .then((data) => {
                 if (data && Array.isArray(data.items)) {

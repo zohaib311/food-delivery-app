@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Search, Trash2, Plus, Users, ShoppingCart, BarChart3, Menu, X, MapPin, Phone, Mail, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import { apiUrl } from '../../config/api';
 
 const STATUS_COLORS = {
     pending: 'bg-yellow-100 text-yellow-800',
@@ -45,11 +46,11 @@ export default function AdminOrders() {
         setLoading(true);
         try {
             const token = localStorage.getItem('authToken');
-            let res = await fetch('http://localhost:8000/api/admin/getAllOrders.php?action=list', {
+            let res = await fetch(apiUrl('/api/admin/getAllOrders.php?action=list'), {
                 headers: token ? { 'Authorization': `Bearer ${token}` } : {}
             });
             if (res.status === 401 && token) {
-                res = await fetch(`http://localhost:8000/api/admin/getAllOrders.php?action=list&token=${token}`);
+                res = await fetch(apiUrl(`/api/admin/getAllOrders.php?action=list&token=${token}`));
             }
             const data = await res.json();
             if (data.success) setOrders(data.orders || []);
@@ -63,11 +64,11 @@ export default function AdminOrders() {
     const updateStatus = async (id, status) => {
         try {
             const token = localStorage.getItem('authToken');
-            let res = await fetch(`http://localhost:8000/api/admin/getAllOrders.php?action=update-status&id=${id}&status=${status}`, {
+            let res = await fetch(apiUrl(`/api/admin/getAllOrders.php?action=update-status&id=${id}&status=${status}`), {
                 headers: token ? { 'Authorization': `Bearer ${token}` } : {}
             });
             if (res.status === 401 && token) {
-                res = await fetch(`http://localhost:8000/api/admin/getAllOrders.php?action=update-status&id=${id}&status=${status}&token=${token}`);
+                res = await fetch(apiUrl(`/api/admin/getAllOrders.php?action=update-status&id=${id}&status=${status}&token=${token}`));
             }
             const data = await res.json();
             if (data.success) {

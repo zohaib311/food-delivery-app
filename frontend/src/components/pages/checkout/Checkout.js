@@ -3,6 +3,7 @@ import { useCart } from '../../../hooks/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, CreditCard, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { apiUrl } from '../../../config/api';
 
 export default function Checkout() {
     const { cart, setCart } = useCart();
@@ -98,7 +99,7 @@ export default function Checkout() {
                 image: item.image
             }));
 
-            const response = await fetch('http://localhost:8000/api/customer/placeOrders.php?action=create', {
+            const response = await fetch(apiUrl('/api/customer/placeOrders.php?action=create'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

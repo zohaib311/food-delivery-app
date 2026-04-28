@@ -1,5 +1,15 @@
 # Getting Started with Create React App
 
+## Environment
+
+Copy `.env.example` to `.env` and set:
+
+```env
+REACT_APP_API_BASE_URL=http://localhost:8000
+```
+
+Restart `npm start` after changing `.env`.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

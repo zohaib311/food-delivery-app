@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, CheckCircle, Truck, AlertCircle, MapPin, Phone, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { apiUrl } from '../../config/api';
 
 export default function CustomerOrders() {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function CustomerOrders() {
                 return;
             }
 
-            const response = await fetch('http://localhost:8000/api/customer/placeOrders.php?action=list', {
+            const response = await fetch(apiUrl('/api/customer/placeOrders.php?action=list'), {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -51,7 +52,7 @@ export default function CustomerOrders() {
         try {
             const token = localStorage.getItem('authToken');
 
-            const response = await fetch(`http://localhost:8000/api/customer/placeOrders.php?action=update-status&id=${orderId}&status=cancelled`, {
+            const response = await fetch(apiUrl(`/api/customer/placeOrders.php?action=update-status&id=${orderId}&status=cancelled`), {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

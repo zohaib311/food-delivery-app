@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Trash2, Plus, Search, ChevronLeft, Users, ShoppingCart, BarChart3, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import { apiUrl } from '../../config/api';
 
 export default function AdminItems() {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function AdminItems() {
     const fetchItems = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8000/api/admin/items.php?action=list', {
+            const res = await fetch(apiUrl('/api/admin/items.php?action=list'), {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
             });
             const data = await res.json();
@@ -74,7 +75,7 @@ export default function AdminItems() {
 
         try {
             const res = await fetch(
-                `http://localhost:8000/api/admin/items.php?action=${action}`,
+                apiUrl(`/api/admin/items.php?action=${action}`),
                 {
                     method: 'POST',
                     headers: {
@@ -126,7 +127,7 @@ export default function AdminItems() {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this item?')) return;
         try {
-            const res = await fetch(`http://localhost:8000/api/admin/items.php?action=delete&id=${id}`, {
+            const res = await fetch(apiUrl(`/api/admin/items.php?action=delete&id=${id}`), {
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
             });
